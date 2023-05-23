@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "508887623793",
+    "project_id": "melomaniacs-2c88f",
+    "storage_bucket": "melomaniacs-2c88f.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:508887623793:android:56914bee88801d77a993d0",
+        "android_client_info": {
+          "package_name": "com.example.melomaniacs"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "508887623793-hn0sv0s247876ivilbgikuskdgmrlq2r.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBYDCdWe6bspwphl-3iNIpDrZNNH1G54KY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "508887623793-hn0sv0s247876ivilbgikuskdgmrlq2r.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
