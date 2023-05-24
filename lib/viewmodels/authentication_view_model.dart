@@ -3,6 +3,7 @@ import 'dart:typed_data';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:melomaniacs/models/Account.dart';
 import 'package:melomaniacs/utils/utils.dart';
 
 class AuthViewModel extends ChangeNotifier {
@@ -30,6 +31,8 @@ class AuthViewModel extends ChangeNotifier {
     String message = "";
     bool result = false;
     try {
+      waiting();
+
       var newUser = await _auth.createUserWithEmailAndPassword(
           email: email, password: password);
 
@@ -37,13 +40,18 @@ class AuthViewModel extends ChangeNotifier {
           ? await Storage().uploadImage("avatars", image, false)
           : "";
 
-      _firestore.collection('users').doc(newUser.user!.uid).set({
-        'username': username,
-        'email': email,
-        'followers': [],
-        'following': [],
-        'avatar': photoUrl
-      });
+      var savedUser = Account(
+          id: newUser.user!.uid,
+          avatar: photoUrl,
+          email: email,
+          followers: [],
+          following: [],
+          username: username);
+
+      _firestore
+          .collection('users')
+          .doc(newUser.user!.uid)
+          .set(savedUser.toJson());
       result = true;
       message = "You have successfully registered";
     } on FirebaseAuthException catch (e) {
@@ -59,9 +67,9 @@ class AuthViewModel extends ChangeNotifier {
       message = e.toString();
     }
 
+    finish();
     return (result, message);
   }
-  
 
   Future<(bool, String)> login(
       {required String email, required String password}) async {

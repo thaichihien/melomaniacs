@@ -11,6 +11,7 @@ import '../components/gradient_text.dart';
 import '../components/navigate_guide.dart';
 import '../components/textfield.dart';
 import '../utils/colors.dart';
+import 'main_screen.dart';
 
 class RegsiterScreen extends StatefulWidget {
   const RegsiterScreen({super.key});
@@ -26,17 +27,16 @@ class _RegsiterScreenState extends State<RegsiterScreen> {
   late TextEditingController _passwordController;
   late TextEditingController _repasswordController;
   Uint8List? _image;
-  bool _loading = false;
   final _formKey = GlobalKey<FormState>();
 
   @override
   void initState() {
+    super.initState();
     _emailController = TextEditingController();
     _nameController = TextEditingController();
     _passwordController = TextEditingController();
     _repasswordController = TextEditingController();
-    _authViewModel = context.watch<AuthViewModel>();
-    super.initState();
+    _authViewModel = Provider.of<AuthViewModel>(context,listen: false);
   }
 
   @override
@@ -59,21 +59,20 @@ class _RegsiterScreenState extends State<RegsiterScreen> {
 
   void register() async {
     if (!_formKey.currentState!.validate()) return;
-    setState(() {
-      _loading = true;
-    });
+
     var (success, message) = await _authViewModel.register(
         email: _emailController.text,
         password: _passwordController.text,
         username: _nameController.text,
         image: _image);
 
-    setState(() {
-      _loading = false;
-    });
-
     if (context.mounted) {
-      showSnakeBar(context, message);
+      if (success) {
+        Navigator.of(context).pushReplacement(
+            MaterialPageRoute(builder: (context) => const MainScreen()));
+      } else {
+        showSnakeBar(context, message);
+      }
     }
   }
 
@@ -91,7 +90,7 @@ class _RegsiterScreenState extends State<RegsiterScreen> {
                 const GradientText(
                   "Melodimaniacs",
                   gradient:
-                      LinearGradient(colors: [primaryColor, secondaryColor]),
+                      specialColorVertial,
                   style: TextStyle(
                       fontWeight: FontWeight.w700,
                       fontSize: 40,
@@ -175,13 +174,13 @@ class _RegsiterScreenState extends State<RegsiterScreen> {
                   onClick: () {
                     register();
                   },
-                  loadingState: _loading,
+                  loadingState: _authViewModel.loading,
                 ),
                 NavigateGuide(
                     guide: "Already have an account ?",
                     label: "Login",
                     onClick: () {
-                     Navigator.of(context).pop();
+                      Navigator.of(context).pop();
                     },
                     alignment: MainAxisAlignment.center)
               ],

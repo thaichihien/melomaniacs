@@ -3,6 +3,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:melomaniacs/utils/colors.dart';
 import 'package:melomaniacs/viewmodels/authentication_view_model.dart';
+import 'package:melomaniacs/viewmodels/main_viewmodel.dart';
 import 'package:melomaniacs/views/login_screen.dart';
 import 'package:melomaniacs/views/main_screen.dart';
 import 'package:provider/provider.dart';
@@ -19,10 +20,13 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
-      providers: [ChangeNotifierProvider(create: (_) => AuthViewModel())],
+      providers: [
+        ChangeNotifierProvider(create: (_) => AuthViewModel()),
+        ChangeNotifierProvider(create: (_) => MainViewModel())
+      ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
-        title: 'Flutter Demo',
+        title: 'Melomaniacs',
         theme: ThemeData(
             colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
             useMaterial3: true,

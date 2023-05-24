@@ -5,6 +5,7 @@ import 'package:melomaniacs/components/navigate_guide.dart';
 import 'package:melomaniacs/components/textfield.dart';
 import 'package:melomaniacs/utils/colors.dart';
 import 'package:melomaniacs/utils/utils.dart';
+import 'package:melomaniacs/views/main_screen.dart';
 import 'package:melomaniacs/views/register_screen.dart';
 import 'package:provider/provider.dart';
 
@@ -21,15 +22,14 @@ class _LoginScreenState extends State<LoginScreen> {
   late final AuthViewModel _authViewModel;
   late TextEditingController _emailController;
   late TextEditingController _passwordController;
-  bool _loading = false;
   final _formKey = GlobalKey<FormState>();
 
   @override
   void initState() {
+    super.initState();
     _emailController = TextEditingController();
     _passwordController = TextEditingController();
-    _authViewModel = context.watch<AuthViewModel>();
-    super.initState();
+    _authViewModel = Provider.of<AuthViewModel>(context,listen: false);
   }
 
   @override
@@ -41,23 +41,17 @@ class _LoginScreenState extends State<LoginScreen> {
 
   void login() async {
     if (!_formKey.currentState!.validate()) return;
-    setState(() {
-      _loading = true;
-    });
+
     var (success, message) = await _authViewModel.login(
         email: _emailController.text, password: _passwordController.text);
 
-    setState(() {
-      _loading = false;
-    });
-
     if (context.mounted) {
       if (success) {
-        Navigator.of(context).push(
-            MaterialPageRoute(builder: (context) => const RegsiterScreen()));
+        Navigator.of(context).pushReplacement(
+            MaterialPageRoute(builder: (context) => const MainScreen()));
+      } else {
+        showSnakeBar(context, message);
       }
-
-      showSnakeBar(context, message);
     }
   }
 
@@ -75,7 +69,7 @@ class _LoginScreenState extends State<LoginScreen> {
               const GradientText(
                 "Melodimaniacs",
                 gradient:
-                    LinearGradient(colors: [primaryColor, secondaryColor]),
+                    specialColorVertial,
                 style: TextStyle(
                     fontWeight: FontWeight.w700,
                     fontSize: 48,
@@ -122,7 +116,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 onClick: () {
                   login();
                 },
-                loadingState: _loading,
+                loadingState: _authViewModel.loading,
               ),
               GestureDetector(
                 onTap: () {},
