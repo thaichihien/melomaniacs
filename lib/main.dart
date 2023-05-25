@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:melomaniacs/utils/colors.dart';
 import 'package:melomaniacs/viewmodels/authentication_view_model.dart';
 import 'package:melomaniacs/viewmodels/main_viewmodel.dart';
+import 'package:melomaniacs/viewmodels/post_view_model.dart';
 import 'package:melomaniacs/views/login_screen.dart';
 import 'package:melomaniacs/views/main_screen.dart';
 import 'package:provider/provider.dart';
@@ -22,7 +23,8 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => AuthViewModel()),
-        ChangeNotifierProvider(create: (_) => MainViewModel())
+        ChangeNotifierProvider(create: (_) => MainViewModel()),
+        ChangeNotifierProvider(create: (_) => PostViewModel())
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,

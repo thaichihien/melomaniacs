@@ -1,4 +1,6 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:melomaniacs/models/post.dart';
 import 'package:melomaniacs/viewmodels/main_viewmodel.dart';
 import 'package:melomaniacs/views/post_item.dart';
 import 'package:melomaniacs/views/post_screen.dart';
@@ -40,7 +42,23 @@ class _HomeScreenState extends State<HomeScreen> {
                     fit: BoxFit.cover,
                   ),
                 ))),
-        body: const PostItem(),
+        body: StreamBuilder(
+          stream: FirebaseFirestore.instance.collection('posts').snapshots(),
+          builder: (context,
+              AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>> snap) {
+            if (snap.connectionState == ConnectionState.waiting) {
+              return const Center(
+                child: CircularProgressIndicator(),
+              );
+            }
+
+            return ListView.builder(
+                itemCount: snap.data!.docs.length,
+                itemBuilder: (context, index) => PostItem(
+                      content: Post.fromJson(snap.data!.docs[index].data()),
+                    ));
+          },
+        ),
         floatingActionButton: FloatingActionButton(
           onPressed: () {
             Navigator.of(context).push(MaterialPageRoute(

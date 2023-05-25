@@ -37,7 +37,7 @@ class AuthViewModel extends ChangeNotifier {
           email: email, password: password);
 
       String photoUrl = image != null
-          ? await Storage().uploadImage("avatars", image, false)
+          ? await CloudStorage().uploadImage("avatars", image)
           : "";
 
       var savedUser = Account(

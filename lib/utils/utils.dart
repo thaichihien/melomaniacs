@@ -4,6 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:uuid/uuid.dart';
 
 Future<Uint8List?> pickImage(ImageSource source) async {
   final ImagePicker picker = ImagePicker();
@@ -16,13 +17,19 @@ Future<Uint8List?> pickImage(ImageSource source) async {
   return null;
 }
 
-class Storage {
+class CloudStorage {
   final FirebaseStorage _storage = FirebaseStorage.instance;
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
-  Future<String> uploadImage(String folder, Uint8List file, bool isPost) async {
+  Future<String> uploadImage(String folder, Uint8List file,{String? postFolder}) async {
     var dic = _storage.ref().child(folder).child(_auth.currentUser!.uid);
-    //var task = dic.putData(file);
+    
+    if(postFolder != null){
+      String imgID = const Uuid().v4();
+      dic = dic.child(postFolder).child(imgID);
+    }
+
+
     var snap = await dic.putData(file);
     String downloadUrl = await snap.ref.getDownloadURL();
     return downloadUrl;

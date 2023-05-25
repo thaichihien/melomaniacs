@@ -82,13 +82,18 @@ class SmallButton extends StatelessWidget {
 class LikeButton extends StatelessWidget {
   final bool liked;
   final int amount;
+  final VoidCallback onClick;
 
-  const LikeButton({super.key, required this.liked, required this.amount});
+  const LikeButton(
+      {super.key,
+      required this.liked,
+      required this.amount,
+      required this.onClick});
 
   @override
   Widget build(BuildContext context) {
     return ElevatedButton(
-        onPressed: () {},
+        onPressed: onClick,
         style: ButtonStyle(
             backgroundColor:
                 liked ? MaterialStateProperty.all<Color>(primaryColor) : null,
