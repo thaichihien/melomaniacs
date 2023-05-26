@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:melomaniacs/models/post.dart';
+import 'package:melomaniacs/models/comment.dart';
 import 'package:uuid/uuid.dart';
 
 import '../utils/utils.dart';
@@ -74,16 +75,17 @@ class PostViewModel extends ChangeNotifier {
     return (result, message);
   }
 
-  Future<bool> likePost(String postId,String userId,List<String> likes) async{
+  Future<bool> likePost(
+      String postId, String userId, List<String> likes) async {
     try {
-      if(likes.contains(userId)){
+      if (likes.contains(userId)) {
         await _firestore.collection('posts').doc(postId).update({
-          'likes' : FieldValue.arrayRemove([userId])
+          'likes': FieldValue.arrayRemove([userId])
         });
         return false;
-      }else{
+      } else {
         await _firestore.collection('posts').doc(postId).update({
-          'likes' : FieldValue.arrayUnion([userId])
+          'likes': FieldValue.arrayUnion([userId])
         });
         return true;
       }
@@ -94,5 +96,38 @@ class PostViewModel extends ChangeNotifier {
     return false;
   }
 
+  Future<(bool, String)> commentPost(String postId, String comment,
+      String userId, String username, String avatar) async {
+    String message = "";
+    bool result = false;
+    try {
+      waiting();
+      String commentId = const Uuid().v1();
+      Comment newComment = Comment(
+          id: commentId,
+          userId: userId,
+          postId: postId,
+          username: username,
+          date: DateTime.now(),
+          avatar: avatar,
+          comment: comment,
+          likes: []);
 
+      await _firestore
+          .collection('posts')
+          .doc(postId)
+          .collection('comments')
+          .doc(commentId)
+          .set(newComment.toJson());
+
+      result = true;
+      message = "Comment Successfully";
+    } catch (e) {
+      result = false;
+      message = e.toString();
+    }
+
+    finish();
+    return (result, message);
+  }
 }

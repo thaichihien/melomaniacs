@@ -37,13 +37,19 @@ class _HomeScreenState extends State<HomeScreen> {
             leading: Padding(
                 padding: const EdgeInsets.all(10.0),
                 child: ClipOval(
-                  child: Image(
-                    image: NetworkImage(user.avatar),
-                    fit: BoxFit.cover,
-                  ),
+                  child: Image.network(user.avatar,
+                  fit: BoxFit.cover,
+                  errorBuilder: (context, error, stackTrace) => Container(color: primaryColor,),
+                  loadingBuilder: (context, child, loadingProgress) {
+                    if(loadingProgress == null) {
+                      return child;
+                    } else {
+                      return  Container(color: primaryColor,);
+                    }
+                  },)
                 ))),
         body: StreamBuilder(
-          stream: FirebaseFirestore.instance.collection('posts').snapshots(),
+          stream: FirebaseFirestore.instance.collection('posts').orderBy('date',descending: true).snapshots(),
           builder: (context,
               AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>> snap) {
             if (snap.connectionState == ConnectionState.waiting) {

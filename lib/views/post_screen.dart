@@ -71,8 +71,9 @@ class _PostScreenState extends State<PostScreen> {
       if (success) {
         showSnakeBar(context, message);
         Navigator.of(context).pop();
+      } else {
+        showSnakeBar(context, message);
       }
-      showSnakeBar(context, message);
     }
   }
 
@@ -108,14 +109,14 @@ class _PostScreenState extends State<PostScreen> {
           minimum: const EdgeInsets.all(16),
           child: SingleChildScrollView(
             child: Column(mainAxisSize: MainAxisSize.min, children: [
-                  _postViewModel.loading
-                      ? const LinearProgressIndicator()
-                      : const SizedBox(),
-                 
-                  const SizedBox(height: 16,),
+              _postViewModel.loading
+                  ? const LinearProgressIndicator()
+                  : const SizedBox(),
+              const SizedBox(
+                height: 16,
+              ),
               Row(
                 children: [
-                  
                   CircleAvatar(
                     radius: 35,
                     backgroundImage: NetworkImage(user.avatar),

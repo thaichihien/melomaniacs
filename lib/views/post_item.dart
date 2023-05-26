@@ -1,7 +1,10 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:melomaniacs/components/button.dart';
 import 'package:melomaniacs/models/account.dart';
+import 'package:melomaniacs/utils/colors.dart';
+import 'package:melomaniacs/views/comment_screen.dart';
 import 'package:provider/provider.dart';
 
 import '../models/post.dart';
@@ -26,7 +29,7 @@ class _PostItemState extends State<PostItem> {
   void initState() {
     super.initState();
     images = widget.content.images;
-    user = Provider.of<MainViewModel>(context,listen: false).currentUser;
+    user = Provider.of<MainViewModel>(context, listen: false).currentUser;
     _postViewModel = Provider.of<PostViewModel>(context, listen: false);
     liked = widget.content.likes.contains(user.id);
   }
@@ -53,9 +56,24 @@ class _PostItemState extends State<PostItem> {
           children: [
             Row(
               children: [
-                CircleAvatar(
-                  radius: 25,
-                  backgroundImage: NetworkImage(widget.content.avatar),
+                SizedBox(
+                  width: 45,
+                  height: 45,
+                  child: ClipOval(
+                    child: Image.network(
+                      widget.content.avatar,
+                      fit: BoxFit.cover,
+                      loadingBuilder: (context, child, loadingProgress) {
+                        if (loadingProgress == null) {
+                          return child;
+                        } else {
+                          return Container(
+                            color: primaryColor,
+                          );
+                        }
+                      },
+                    ),
+                  ),
                 ),
                 const SizedBox(
                   width: 20,
@@ -108,9 +126,28 @@ class _PostItemState extends State<PostItem> {
                       ),
                       itemBuilder: (context, index) => ClipRRect(
                         borderRadius: BorderRadius.circular(20),
-                        child: Image(
-                          image: NetworkImage(images.elementAt(index)),
+                        child: Image.network(
+                          images.elementAt(index),
                           fit: BoxFit.cover,
+                          loadingBuilder: (context, child, loadingProgress) {
+                            if (loadingProgress == null) {
+                              return child;
+                            } else {
+                              return Container(
+                                width: 350,
+                                padding: const EdgeInsets.all(8.0),
+                                child: Center(
+                                  child: CircularProgressIndicator(
+                                    value: loadingProgress.expectedTotalBytes !=
+                                            null
+                                        ? loadingProgress.cumulativeBytesLoaded /
+                                            loadingProgress.expectedTotalBytes!
+                                        : null,
+                                  ),
+                                ),
+                              );
+                            }
+                          },
                         ),
                       ),
                     ),
@@ -125,7 +162,64 @@ class _PostItemState extends State<PostItem> {
                   onClick: likePost,
                   liked: liked,
                   amount: widget.content.likes.length,
-                )
+                ),
+                const SizedBox(
+                  width: 24,
+                ),
+                StreamBuilder(
+                    stream: FirebaseFirestore.instance
+                        .collection('posts')
+                        .doc(widget.content.id)
+                        .collection('comments')
+                        .orderBy('date', descending: true)
+                        .snapshots(),
+                    builder: (context,
+                        AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>>
+                            snap) {
+                      if (snap.connectionState == ConnectionState.waiting) {
+                        return const InkResponse(
+                          splashColor: primaryColor,
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Icon(
+                                Icons.chat,
+                                size: 30,
+                              ),
+                              SizedBox(
+                                width: 10,
+                              ),
+                            ],
+                          ),
+                        );
+                      }
+
+                      return InkResponse(
+                        splashColor: primaryColor,
+                        onTap: () {
+                          Navigator.of(context).push(MaterialPageRoute(
+                              builder: (context) => CommentScreen(
+                                    postId: widget.content.id,
+                                  )));
+                        },
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            const Icon(
+                              Icons.chat,
+                              size: 30,
+                            ),
+                            const SizedBox(
+                              width: 10,
+                            ),
+                            Text(
+                              snap.data!.docs.length.toString(),
+                              style: const TextStyle(fontSize: 18),
+                            )
+                          ],
+                        ),
+                      );
+                    })
               ],
             )
           ]),

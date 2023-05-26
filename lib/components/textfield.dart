@@ -2,20 +2,23 @@ import 'package:flutter/material.dart';
 
 import '../utils/colors.dart';
 
-enum InputType { text, password, repassword, email, free }
+enum InputType { text, password, repassword, email, free,message }
+typedef TextChangedCallBack = Function(String);
 
 class CustomTextField extends StatefulWidget {
   final TextEditingController textEditingController;
   final String hintText;
   final InputType type;
   final String comparePassword;
+  final TextChangedCallBack? onChanged;
 
   const CustomTextField(
       {super.key,
       required this.textEditingController,
       required this.hintText,
       this.type = InputType.text,
-      this.comparePassword = ""});
+      this.comparePassword = "", 
+      this.onChanged});
 
   @override
   State<CustomTextField> createState() => _CustomTextFieldState();
@@ -32,6 +35,10 @@ class _CustomTextFieldState extends State<CustomTextField> {
               widget.type == InputType.repassword)
           ? !_isVisible
           : false,
+      onChanged: widget.onChanged != null ? (text) {
+        widget.onChanged!(text);
+      } : null,
+      maxLines: widget.type == InputType.message ? null : 1,
       decoration: InputDecoration(
           fillColor: const Color.fromARGB(255, 233, 233, 233),
           filled: true,

@@ -9,7 +9,15 @@ class MainViewModel extends ChangeNotifier {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   Account? _currentUser;
-  Account get currentUser => _currentUser!;
+  Account get currentUser =>
+      _currentUser ??
+      Account(
+          id: "",
+          avatar: "",
+          email: "",
+          followers: [],
+          following: [],
+          username: "");
 
   Future<void> getUser() async {
     var snap =
