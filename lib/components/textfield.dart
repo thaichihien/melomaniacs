@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 
 import '../utils/colors.dart';
 
-enum InputType { text, password, repassword, email, free,message }
+enum InputType { text, password, repassword, email, free, message, search }
+
 typedef TextChangedCallBack = Function(String);
 
 class CustomTextField extends StatefulWidget {
@@ -11,14 +12,16 @@ class CustomTextField extends StatefulWidget {
   final InputType type;
   final String comparePassword;
   final TextChangedCallBack? onChanged;
+  final TextChangedCallBack? onFieldSubmitted;
 
   const CustomTextField(
       {super.key,
       required this.textEditingController,
       required this.hintText,
       this.type = InputType.text,
-      this.comparePassword = "", 
-      this.onChanged});
+      this.comparePassword = "",
+      this.onChanged,
+      this.onFieldSubmitted});
 
   @override
   State<CustomTextField> createState() => _CustomTextFieldState();
@@ -30,21 +33,23 @@ class _CustomTextFieldState extends State<CustomTextField> {
   @override
   Widget build(BuildContext context) {
     return TextFormField(
+      textAlignVertical: TextAlignVertical.center,
       controller: widget.textEditingController,
       obscureText: (widget.type == InputType.password ||
               widget.type == InputType.repassword)
           ? !_isVisible
           : false,
-      onChanged: widget.onChanged != null ? (text) {
-        widget.onChanged!(text);
-      } : null,
+      onChanged: widget.onChanged != null
+          ? (text) {
+              widget.onChanged!(text);
+            }
+          : null,
       maxLines: widget.type == InputType.message ? null : 1,
       decoration: InputDecoration(
-          fillColor: const Color.fromARGB(255, 233, 233, 233),
+          fillColor: greyColor,
           filled: true,
           enabledBorder: OutlineInputBorder(
-              borderSide:
-                  const BorderSide(color: Color.fromARGB(255, 233, 233, 233)),
+              borderSide: const BorderSide(color: greyColor),
               borderRadius: BorderRadius.circular(25.0)),
           focusedBorder: OutlineInputBorder(
               borderSide: const BorderSide(color: primaryColor, width: 2),
@@ -57,6 +62,9 @@ class _CustomTextFieldState extends State<CustomTextField> {
               borderRadius: BorderRadius.circular(25.0)),
           hintText: widget.hintText,
           hintStyle: const TextStyle(color: primaryColor),
+          prefixIcon: (widget.type == InputType.search)
+              ? const Icon(Icons.search)
+              : null,
           suffixIcon: (widget.type == InputType.password ||
                   widget.type == InputType.repassword)
               ? IconButton(
@@ -90,6 +98,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
 
         return null;
       },
+      onFieldSubmitted: widget.onFieldSubmitted,
     );
   }
 }

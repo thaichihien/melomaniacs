@@ -93,12 +93,7 @@ class _CommentScreenState extends State<CommentScreen> {
             );
           }
 
-          // WidgetsBinding.instance.addPostFrameCallback((_) {
-          //   setState(() {
-          //     amount = snap.data!.docs.length;
-          //   });
-          //  });
-
+      
           return ListView.builder(
               itemCount: snap.data!.docs.length,
               itemBuilder: (context, index) => CommentItem(

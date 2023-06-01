@@ -6,6 +6,7 @@ import 'package:melomaniacs/components/button.dart';
 import 'package:melomaniacs/utils/utils.dart';
 import 'package:melomaniacs/viewmodels/main_viewmodel.dart';
 import 'package:melomaniacs/viewmodels/post_view_model.dart';
+import 'package:melomaniacs/views/search_song_screen.dart';
 import 'package:provider/provider.dart';
 
 import '../utils/colors.dart';
@@ -203,7 +204,11 @@ class _PostScreenState extends State<PostScreen> {
                         width: 30,
                       ),
                       InkWell(
-                        onTap: () {},
+                        onTap: () {
+                          Navigator.of(context).push(MaterialPageRoute(
+                            builder: (context) => const SearchSongScreen(),
+                          ));
+                        },
                         child: const Column(
                           mainAxisSize: MainAxisSize.min,
                           mainAxisAlignment: MainAxisAlignment.center,

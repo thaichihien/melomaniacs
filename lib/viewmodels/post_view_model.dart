@@ -3,19 +3,33 @@ import 'dart:typed_data';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:melomaniacs/models/api_status.dart';
 import 'package:melomaniacs/models/post.dart';
 import 'package:melomaniacs/models/comment.dart';
+import 'package:melomaniacs/network/api_client.dart';
 import 'package:uuid/uuid.dart';
 
+import '../models/song.dart';
 import '../utils/utils.dart';
 
 class PostViewModel extends ChangeNotifier {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final CloudStorage _storage = CloudStorage();
+  late final ApiClient _api;
+  String _error = "";
+  List<Song> _songList = [];
+
 
   bool _loading = false;
   bool get loading => _loading;
+  List<Song> get songList => _songList;
+  String get error => _error;
+
+  PostViewModel(){
+    _api = ApiClient();
+  }
+
 
   waiting() {
     _loading = true;
@@ -130,4 +144,21 @@ class PostViewModel extends ChangeNotifier {
     finish();
     return (result, message);
   }
+
+  searchSong(String query) async {
+    waiting();
+    
+    var response = await _api.getSongs(query);
+    if(response is Success){
+      debugPrint(response.data!.length.toString());
+      _songList = response.data!;
+    }else if(response is Failure){
+      _error = response.errorMessage!;
+      debugPrint(_error);
+    }
+
+    finish();
+  }
+
+
 }
