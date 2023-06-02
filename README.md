@@ -1,16 +1,17 @@
-# melomaniacs
+# Melomaniacs 🎵
 
-A new Flutter project.
+A social network for music lovers. Where they can share their thoughts, photos, media about their favorite music. The application uses the Flutter framework, support for both IOS and Android
+- [Get an overview of the application interface (Figma)](https://www.figma.com/file/yQETMRBnVniSMTDqGTvLZt/Melomaniacs?type=design&t=IEFiI3h2xAfYiiFP-1)
 
-## Getting Started
+## Features
 
-This project is a starting point for a Flutter application.
+- [X] Share your thoughts and images on the topic of music
+- [X] Leave a like and comment on the post
+- [ ] Create lyrics card from your favorite song
+- [ ] Chat with other melomaniacs
 
-A few resources to get you started if this is your first Flutter project:
+## Teck Stack
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+- **Flutter** : Provide, Http
+- **Firebase**: Authentication, Cloud Firestore, Storage
+- **Node JS**: Express, Typescript  
