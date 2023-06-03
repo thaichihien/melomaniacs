@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:melomaniacs/components/button.dart';
 import 'package:melomaniacs/components/textfield.dart';
 import 'package:melomaniacs/utils/colors.dart';
+import 'package:melomaniacs/views/lyrics_screen.dart';
 import 'package:melomaniacs/views/song_item.dart';
 import 'package:provider/provider.dart';
 
@@ -64,16 +65,23 @@ class _SearchSongScreenState extends State<SearchSongScreen> {
         ),
         SliverList(
           delegate: postViewModel.loading
-              ?   SliverChildListDelegate.fixed([
+              ? SliverChildListDelegate.fixed([
                   SizedBox(
-                    height: MediaQuery.of(context).size.height - MediaQuery.of(context).viewPadding.top,
+                    height: MediaQuery.of(context).size.height -
+                        MediaQuery.of(context).viewPadding.top,
                     child: const Center(
                       child: CircularProgressIndicator(color: primaryColor),
                     ),
                   )
                 ])
               : SliverChildBuilderDelegate((context, index) {
-                  return SongItem(song: postViewModel.songList[index]);
+                  return InkWell(
+                      onTap: () {
+                        postViewModel.selectSong(postViewModel.songList[index]);
+                        Navigator.of(context).push(MaterialPageRoute(
+                            builder: (context) => const LyricsScreen()));
+                      },
+                      child: SongItem(song: postViewModel.songList[index]));
                 }, childCount: postViewModel.songList.length),
         ),
       ],
@@ -81,8 +89,6 @@ class _SearchSongScreenState extends State<SearchSongScreen> {
   }
 
   void searchSong(PostViewModel postViewModel, String value) {
-    debugPrint("before :${postViewModel.songList.length}");
     postViewModel.searchSong(value);
-    debugPrint("after :${postViewModel.songList.length}");
   }
 }

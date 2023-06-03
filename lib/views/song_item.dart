@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:melomaniacs/components/image_processer.dart';
 import 'package:melomaniacs/utils/colors.dart';
 
 import '../models/song.dart';
@@ -29,22 +30,8 @@ class _SongItemState extends State<SongItem> {
             height: 70,
             width: 70,
             child: ClipRRect(
-              borderRadius: BorderRadius.circular(20),
-              child: Image.network(
-                widget.song.image,
-                fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) => Container(color: primaryColor,),
-                loadingBuilder: (context, child, loadingProgress) {
-                  if (loadingProgress == null) {
-                    return child;
-                  } else {
-                    return Container(
-                      color: primaryColor,
-                    );
-                  }
-                },
-              ),
-            ),
+                borderRadius: BorderRadius.circular(20),
+                child: ImageProccessor(src: widget.song.image)),
           ),
           const SizedBox(
             width: 10,
@@ -67,7 +54,7 @@ class _SongItemState extends State<SongItem> {
                     height: 8,
                   ),
                   Text(
-                    widget.song.artist.join(","),
+                    widget.song.artist.join(", "),
                     overflow: TextOverflow.ellipsis,
                   ),
                 ],
