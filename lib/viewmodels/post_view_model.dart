@@ -23,6 +23,8 @@ class PostViewModel extends ChangeNotifier {
   Song? _selectedSong;
   List<int> _selectedLyricsIndex = [-1, -1];
   List<Lyrics> _lyricsList = [];
+  List<String> _savedLyricsList = [];
+  final int lyricsLengthLimit = 5;
 
   bool _loading = false;
   bool get loading => _loading;
@@ -39,6 +41,7 @@ class PostViewModel extends ChangeNotifier {
 
   int get startLyricsIndex => _selectedLyricsIndex[0];
   int get endLyricsIndex => _selectedLyricsIndex[1];
+  List<String>get savedLyricsList => _savedLyricsList;
 
   PostViewModel() {
     _api = ApiClient();
@@ -199,16 +202,10 @@ class PostViewModel extends ChangeNotifier {
   void selectLyrics(int index) {
     var lyricsAtIndex = lyricsList[index];
 
-    debugPrint("$index : ${lyricsAtIndex.state}");
-
     if (lyricsAtIndex.state != SelectedLyricsState.selected &&
-        lyricsLength >= 6) {
-      debugPrint("$lyricsLength");
+        lyricsLength >= lyricsLengthLimit) {
       return;
     }
-
-    debugPrint(
-        "$index : ${lyricsAtIndex.state == SelectedLyricsState.unselected}");
 
     if (lyricsAtIndex.state == SelectedLyricsState.unselected) {
       clearAllSelectedLyrics(clearSaved: true);
@@ -227,15 +224,11 @@ class PostViewModel extends ChangeNotifier {
         lyricsAtIndex.state = SelectedLyricsState.selected;
         _selectedLyricsIndex[1] = index;
         setAvailableLyricsState(index + 1);
-
-       
-
       }
 
-        if(lyricsLength >= 6){
-          removeAllAvailable();
-        }
-
+      if (lyricsLength >= lyricsLengthLimit) {
+        removeAllAvailable();
+      }
     } else if (lyricsAtIndex.state == SelectedLyricsState.selected) {
       if (index == startLyricsIndex) {
         if (lyricsLength == 1) {
@@ -245,25 +238,19 @@ class PostViewModel extends ChangeNotifier {
           lyricsList[index - 1].state = SelectedLyricsState.unselected;
           setAvailableLyricsState(index, clearIndex: index - 1);
 
-          if(lyricsLength == 5){
+          if (lyricsLength == lyricsLengthLimit - 1) {
             setAvailableLyricsState(endLyricsIndex + 1);
           }
-
-
         }
       } else {
         clearAllSelectedLyrics(from: index, to: endLyricsIndex + 1);
         _selectedLyricsIndex[1] = index - 1;
         setAvailableLyricsState(index);
 
-        if(lyricsLength == 5){
-            setAvailableLyricsState(startLyricsIndex - 1);
-          }
+        if (lyricsLength == lyricsLengthLimit - 1) {
+          setAvailableLyricsState(startLyricsIndex - 1);
+        }
       }
-
-
-
-
     }
 
     notifyListeners();
@@ -293,7 +280,7 @@ class PostViewModel extends ChangeNotifier {
 
   void setAvailableLyricsState(int index, {int? clearIndex}) {
     // - check length
-    if (lyricsLength >= 6 || index < 0 || index >= lyricsList.length) {
+    if (lyricsLength >= lyricsLengthLimit || index < 0 || index >= lyricsList.length) {
       return;
     }
 
@@ -306,14 +293,20 @@ class PostViewModel extends ChangeNotifier {
     lyricsList[index].state = SelectedLyricsState.available;
   }
 
-  void removeAllAvailable(){
-    if(startLyricsIndex > 0){
+  void removeAllAvailable() {
+    if (startLyricsIndex > 0) {
       lyricsList[startLyricsIndex - 1].state = SelectedLyricsState.unselected;
     }
 
-    if(endLyricsIndex < lyricsList.length - 1){
+    if (endLyricsIndex < lyricsList.length - 1) {
       lyricsList[endLyricsIndex + 1].state = SelectedLyricsState.unselected;
     }
   }
 
+  void saveLyrics() {
+    _savedLyricsList = [];
+    for (var i = startLyricsIndex; i <= endLyricsIndex; i++) {
+      _savedLyricsList.add(lyricsList[i].content);
+    }
+  }
 }
