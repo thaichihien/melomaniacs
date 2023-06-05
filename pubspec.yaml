@@ -37,10 +37,13 @@ dependencies:
     sdk: flutter
   glassmorphism: ^3.0.0
   http: ^0.13.6
+  image_gallery_saver: ^2.0.1
   image_picker: ^0.8.7+5
   intl: ^0.18.1
   palette_generator: ^0.3.3+2
+  permission_handler: ^10.2.0
   provider: ^6.0.5
+  screenshot: ^2.1.0
   uuid: ^3.0.7
 
 dev_dependencies:

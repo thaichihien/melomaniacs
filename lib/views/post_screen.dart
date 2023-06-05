@@ -12,7 +12,8 @@ import 'package:provider/provider.dart';
 import '../utils/colors.dart';
 
 class PostScreen extends StatefulWidget {
-  const PostScreen({super.key});
+  final Uint8List? createdLyricsCard;
+  const PostScreen({super.key, this.createdLyricsCard});
 
   @override
   State<PostScreen> createState() => _PostScreenState();
@@ -22,6 +23,8 @@ class _PostScreenState extends State<PostScreen> {
   List<Uint8List> images = [];
   late final TextEditingController _captionController;
   late final PostViewModel _postViewModel;
+
+  
 
   selectImage() async {
     return showDialog(
@@ -82,6 +85,9 @@ class _PostScreenState extends State<PostScreen> {
   void initState() {
     _captionController = TextEditingController();
     _postViewModel = Provider.of<PostViewModel>(context, listen: false);
+    if(widget.createdLyricsCard != null){
+      images.add(widget.createdLyricsCard!);
+    }
     super.initState();
   }
 

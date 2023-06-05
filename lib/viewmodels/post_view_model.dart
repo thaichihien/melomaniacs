@@ -3,6 +3,7 @@ import 'dart:typed_data';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:melomaniacs/models/api_status.dart';
 import 'package:melomaniacs/models/lyrics.dart';
 import 'package:melomaniacs/models/post.dart';
@@ -25,6 +26,8 @@ class PostViewModel extends ChangeNotifier {
   List<Lyrics> _lyricsList = [];
   List<String> _savedLyricsList = [];
   final int lyricsLengthLimit = 5;
+  
+
 
   bool _loading = false;
   bool get loading => _loading;
@@ -309,4 +312,20 @@ class PostViewModel extends ChangeNotifier {
       _savedLyricsList.add(lyricsList[i].content);
     }
   }
+
+
+  void saveImageToGallery(Uint8List image) async {
+      final time = DateTime.now()
+          .toIso8601String()
+          .replaceAll('.', '-')
+          .replaceAll(':', '-');
+
+      final name = "melomaniacs_lyrics_card_$time";
+      await requestSavePermission();
+      await ImageGallerySaver.saveImage(image!, name: name);
+
+     
+  }
+
+  
 }

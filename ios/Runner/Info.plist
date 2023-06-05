@@ -53,5 +53,7 @@
 	<string>Camera Usage</string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>Video Usage</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>Save image Usage</string>
 </dict>
 </plist>
